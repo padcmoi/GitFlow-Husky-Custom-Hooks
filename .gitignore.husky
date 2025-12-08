@@ -1,0 +1,3 @@
+# rules coming from the husky submodule
+.husky/*
+!.husky/meta

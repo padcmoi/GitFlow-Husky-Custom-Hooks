@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+
+. "$(dirname "$0")/libs/common.sh"
+common_libs
+
+. "$(dirname "$0")/libs/commit_rules.sh"
+. "$(dirname "$0")/libs/tag_process.sh"
+. "$(dirname "$0")/libs/changelog.sh"
+
+#Hook start here
+
+case "$CURRENT_BRANCH" in
+HEAD | head | "") ;;
+main | origin/main) ;;
+develop | origin/develop) ;;
+feature/* | origin/feature/*) ;;
+bugfix/* | origin/bugfix/*) ;;
+hotfix/* | origin/hotfix/*)
+	make_changelog_json "$GITFLOW_VERSION"
+	if [ "$FN_RETURN" -eq 0 ]; then
+		git add -f "$PATH_CHANGELOG_JSON" || true
+		git commit -m "chore: update changelog json" --no-verify || true
+	fi
+	;;
+release/* | origin/release/*)
+	make_changelog_json "$GITFLOW_VERSION"
+	if [ "$FN_RETURN" -eq 0 ]; then
+		git add -f "$PATH_CHANGELOG_JSON" || true
+		git commit -m "chore: update changelog json" --no-verify || true
+	fi
+	;;
+*) ;;
+esac
+
+auto_push

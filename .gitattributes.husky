@@ -1,0 +1,5 @@
+CHANGELOG.md merge=ours -diff
+
+# Never diff these files
+meta/* -diff
+

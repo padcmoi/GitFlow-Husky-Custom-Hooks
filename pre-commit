@@ -22,5 +22,12 @@ release/* | origin/release/*) ;;
 *) ;;
 esac
 
-npm run format || true
-npm run lint || true
+npm run format || {
+	echo "❌ Prettier formatting failed"
+	exit 1
+}
+
+npm run lint || {
+	echo "❌ ESLint failed. See 'pnpm run lint' for details."
+	exit 1
+}

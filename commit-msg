@@ -15,13 +15,11 @@ COMMIT_EDITMSG=$(cat "$COMMIT_EDITMSG_FILE" 2>/dev/null)
 
 case "$CURRENT_BRANCH" in
 HEAD | head | "") ;;
-main | origin/main) ;;
-develop | origin/develop) ;;
-feature/* | origin/feature/*) ;;
-bugfix/* | origin/bugfix/*) ;;
-hotfix/* | origin/hotfix/*) ;;
-release/* | origin/release/*) ;;
+main | origin/main) commitmsg_guard "$COMMIT_EDITMSG" || exit 1 ;;
+develop | origin/develop) commitmsg_guard "$COMMIT_EDITMSG" || exit 1 ;;
+feature/* | origin/feature/*) commitmsg_guard "$COMMIT_EDITMSG" || exit 1 ;;
+bugfix/* | origin/bugfix/*) commitmsg_guard "$COMMIT_EDITMSG" || exit 1 ;;
+hotfix/* | origin/hotfix/*) commitmsg_guard "$COMMIT_EDITMSG" || exit 1 ;;
+release/* | origin/release/*) commitmsg_guard "$COMMIT_EDITMSG" || exit 1 ;;
 *) ;;
 esac
-
-commitmsg_guard "$COMMIT_EDITMSG" || exit 1

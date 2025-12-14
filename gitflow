@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+set -e
+
+sh .husky/libs/gitflow.sh "$@"

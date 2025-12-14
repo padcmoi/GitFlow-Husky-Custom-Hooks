@@ -7,15 +7,6 @@ common_libs 2>/dev/null || true
 . "$(dirname "$0")/libs/tag_process.sh" 2>/dev/null || true
 . "$(dirname "$0")/libs/changelog.sh" 2>/dev/null || true
 
-FILES_TO_ADD=""
-
-add_file() {
-	case " $FILES_TO_ADD " in
-	*" $1 "*) ;;
-	*) FILES_TO_ADD="$FILES_TO_ADD $1" ;;
-	esac
-}
-
 # remove the folder to avoid crashes
 [ -d ".husky/_" ] && rm -R .husky/_
 
@@ -29,7 +20,6 @@ for f in .gitattributes .gitconfig .gitignore; do
 		grep -Fxq "$line" "$dest" 2>/dev/null || {
 			[ -n "$(tail -c1 "$dest" 2>/dev/null)" ] && printf "\n\n" >>"$dest"
 			echo "$line" >>"$dest"
-			add_file "$dest"
 		}
 	done <"$src"
 
@@ -37,26 +27,17 @@ for f in .gitattributes .gitconfig .gitignore; do
 done
 
 # create shortcut for gitflow commands
-tmp_gitflow="$(mktemp)"
-cat >"$tmp_gitflow" <<'EOF'
+cat >gitflow <<'EOF'
 #!/usr/bin/env sh
 set -e
 
 sh .husky/libs/gitflow.sh "$@"
 EOF
+chmod +x gitflow
 
-if [ ! -f "gitflow" ] || ! cmp -s "$tmp_gitflow" "gitflow" 2>/dev/null; then
-	mv "$tmp_gitflow" "gitflow"
-	chmod +x gitflow
-	add_file "gitflow"
-else
-	rm -f "$tmp_gitflow"
-	chmod +x gitflow 2>/dev/null || true
-fi
-
-# commit
-if [ -n "$FILES_TO_ADD" ] && [ -n "$(git status --porcelain 2>/dev/null)" ]; then
-	git add $FILES_TO_ADD
+# commit everything present without push (push is incompatible here)
+if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+	git add .
 	git commit -m "chore: Install husky custom hooks" --no-verify
 	echo "Install husky custom hooks"
 fi

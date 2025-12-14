@@ -58,6 +58,42 @@ else
 	chmod +x gitflow 2>/dev/null || true
 fi
 
+# Add commitlint with the recommended configuration for proper Husky operation
+if [ ! -f "commitlint.config.cjs" ]; then
+	cat >commitlint.config.cjs <<'EOF'
+/* eslint-disable no-undef */
+module.exports = {
+  extends: ["@commitlint/config-conventional"],
+  rules: {
+    "header-max-length": [2, "always", 100],
+    "type-enum": [
+      2,
+      "always",
+      [
+        "fix",
+        "feat",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "chore",
+        "build",
+        "ci",
+        "revert",
+        "remove",
+
+        //
+      ],
+    ],
+    "scope-enum": [1, "always", ["api1", "api2", "db", "ui", "core"]],
+    "subject-empty": [2, "never"],
+  },
+};
+EOF
+	add_file "commitlint.config.cjs"
+fi
+
 # commit
 if [ -n "$FILES_TO_ADD" ] && [ -n "$(git status --porcelain 2>/dev/null)" ]; then
 	git add $FILES_TO_ADD

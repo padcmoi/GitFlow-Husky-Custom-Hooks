@@ -45,6 +45,10 @@ set -e
 sh .husky/libs/gitflow.sh "$@"
 EOF
 
+# checks if these essential scripts are present and if not, generates empty scripts
+npm pkg get scripts --json | grep -q '"format"' || npm pkg set scripts.format="echo 'script does not exist'"
+npm pkg get scripts --json | grep -q '"lint"' || npm pkg set scripts.lint="echo 'script does not exist'"
+
 if [ ! -f "gitflow" ] || ! cmp -s "$tmp_gitflow" "gitflow" 2>/dev/null; then
 	mv "$tmp_gitflow" "gitflow"
 	chmod +x gitflow

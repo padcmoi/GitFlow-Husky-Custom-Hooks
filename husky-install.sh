@@ -61,6 +61,7 @@ fi
 # commit
 if [ -n "$FILES_TO_ADD" ] && [ -n "$(git status --porcelain 2>/dev/null)" ]; then
 	git add $FILES_TO_ADD
+	git add package.json
 	git commit -m "chore: Install husky custom hooks" --no-verify
 	echo "Install husky custom hooks"
 fi
